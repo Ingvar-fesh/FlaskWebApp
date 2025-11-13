@@ -24,9 +24,12 @@ jobs:
       run: |
        echo "Igor Feshchenko"
 
-    - name: Wrong command
-      run: |
-        ec "It's a wrong command"
+  second_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wrong command
+        run: |
+          ec "Wrong command"
   
 
 
