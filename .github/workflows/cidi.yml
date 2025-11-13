@@ -22,7 +22,7 @@ jobs:
 
     - name: List Files
       run: |
-       echo "Igor is teaching all the time"
+       ec "Igor is teaching all the time"
 
 
 
