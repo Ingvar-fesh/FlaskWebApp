@@ -20,9 +20,14 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: List Files
+    - name: My name output
       run: |
-       ec "Igor is teaching all the time"
+       echo "Igor Feshchenko"
+
+    - name: Wrong command
+      run: |
+        ec "It's a wrong command"
+  
 
 
 
