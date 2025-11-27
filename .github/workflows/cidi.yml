@@ -22,6 +22,7 @@ jobs:
     - name: List Files
       run: |
        echo "Igor is teaching"
+       echo "Testing"
 
     - name: Install Dependencies
       run: |
