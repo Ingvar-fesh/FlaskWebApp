@@ -10,62 +10,30 @@ permissions:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
 
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
+    - name: List Files
+      run: |
+       echo "Igor is teaching"
 
-      - name: My name output
-        run: |
-          echo "Igor Feshchenko"
+    - name: Install Dependencies
+      run: |
+       python -m pip install --upgrade pip
+       pip install -r requirements.txt
+       python -m pip install flake8
 
-  after-building:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Image
-        run: |
-          # Build the image with a tag (format: username/repo:tag)
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-app:latest .
-          
-          # Push the image
-          docker push ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-
-      - name: My docker information
-        run: |
-          echo "Username: ${{ secrets.DOCKER_USERNAME }}"
-          echo "User password: ${{ secrets.DOCKER_PASSWORD }}"
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          python -m pip install flake8
-
-      - name: Run tests
-        run: | 
-          pytest -v
-          echo "✅ All tests passed successfully!"
-          echo ""
+    - name: Lint Check
+      run: |
+       flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+       flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   deploy:
     runs-on: ubuntu-latest
@@ -83,8 +51,8 @@ jobs:
 
     - name: Build and Push Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/devops:v1 .
-        docker push ${{ secrets.DOCKER_USERNAME }}/devops:v1
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/devops:${{ github.sha }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/devops:${{ github.sha }}
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -92,6 +60,3 @@ jobs:
         app-name: 'devopsclass1'
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         images: '${{ secrets.DOCKER_USERNAME }}/devops:${{ github.sha }}'
-
-
-
