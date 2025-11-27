@@ -65,6 +65,7 @@ jobs:
         run: | 
           pytest -v
           echo "✅ All tests passed successfully!"
+          echo ""
 
   deploy:
     runs-on: ubuntu-latest
